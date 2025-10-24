@@ -1,0 +1,18 @@
+{
+  "name": "Virtual 3D Gallery",
+  "version": "1.0",
+  "author": "S. Vinyarskiy",
+  "paintings": [
+    { "id": "paintingG01", "filename": "paintingG01.jpg" },
+    { "id": "paintingG02", "filename": "paintingG02.jpg" },
+    { "id": "paintingG03", "filename": "paintingG03.jpg" },
+    { "id": "paintingG04", "filename": "paintingG04.jpg" },
+    { "id": "paintingG05", "filename": "paintingG05.jpg" },
+    { "id": "paintingG06", "filename": "paintingG06.jpg" },
+    { "id": "paintingG07", "filename": "paintingG07.jpg" },
+    { "id": "paintingG08", "filename": "paintingG08.jpg" },
+    { "id": "paintingG09", "filename": "paintingG09.jpg" },
+    { "id": "paintingG10", "filename": "paintingG10.jpg" },
+    { "id": "paintingG11", "filename": "paintingG11.jpg" }
+  ]
+}
