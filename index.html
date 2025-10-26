@@ -72,27 +72,26 @@
   shadow="type: pcfsoft"
   fog="type: linear; color: #f0f0f0; near: 10; far: 20">
 
-  <!-- Освещение -->
+<!-- Освещение -->
   <a-entity light="type: ambient; intensity: 1.0"></a-entity>
   <a-entity light="type: directional; intensity: 1.2; castShadow: true" position="4 7 4"></a-entity>
 
-  <!-- Пол -->
+  <!-- Пол и стены -->
   <a-box position="0 0 0" width="12" height="0.1" depth="12" color="#ffffff" shadow="receive: true"></a-box>
-
-  <!-- Стены -->
   <a-box position="0 3 -6" width="12" height="6" depth="0.1" color="#e8e8e8"></a-box>
   <a-box position="0 3 6" width="12" height="6" depth="0.1" color="#e8e8e8"></a-box>
   <a-box position="-6 3 0" width="0.1" height="6" depth="12" color="#e8e8e8"></a-box>
   <a-box position="6 3 0" width="0.1" height="6" depth="12" color="#e8e8e8"></a-box>
 
-  <!-- Контейнер для картин -->
+  <!-- Галерея -->
   <a-entity id="gallery"></a-entity>
 
   <!-- Камера -->
-  <a-entity camera look-controls wasd-controls position="0 1.6 0" rotation="0 180 0">
+  <a-entity camera look-controls wasd-controls position="0 1.6 0" rotation="0 90 0">
     <a-entity cursor="rayOrigin: mouse; fuse: false"
               raycaster="objects: .clickable; far: 30"></a-entity>
   </a-entity>
+
 
 
 </a-scene>
