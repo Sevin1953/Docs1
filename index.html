@@ -4,40 +4,74 @@
   <meta charset="UTF-8">
   <title>Виртуальная 3D картинная галерея</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+  <!-- Стабильная версия A-Frame без проблем с useLegacyLights -->
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+
   <style>
-    body { margin: 0; overflow: hidden; font-family: 'Segoe UI', sans-serif; }
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: 'Segoe UI', sans-serif;
+    }
     #infoBox {
-      position: fixed; bottom: 1em; left: 1em; right: 1em;
-      background: rgba(255, 255, 255, 0.97); color: #000;
-      border-radius: 10px; padding: 16px; box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-      display: none; max-width: 420px; z-index: 1000;
-      font-size: 0.95em; line-height: 1.6; border: 1px solid #eee;
+      position: fixed;
+      bottom: 1em;
+      left: 1em;
+      right: 1em;
+      background: rgba(255, 255, 255, 0.97);
+      color: #000;
+      border-radius: 10px;
+      padding: 16px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      display: none;
+      max-width: 420px;
+      z-index: 1000;
+      font-size: 0.95em;
+      line-height: 1.6;
+      border: 1px solid #eee;
     }
     #closeBtn {
-      float: right; cursor: pointer; color: #888; font-weight: bold;
-      font-size: 1.3em; margin-left: 10px; user-select: none;
+      float: right;
+      cursor: pointer;
+      color: #888;
+      font-weight: bold;
+      font-size: 1.3em;
+      margin-left: 10px;
+      user-select: none;
     }
-    #closeBtn:hover { color: #000; }
-    .info-title { font-size: 1.15em; font-weight: 600; margin-bottom: 6px; color: #1a1a1a; }
-    .info-author { font-style: italic; color: #555; margin-bottom: 8px; }
-    .info-desc { color: #333; }
+    #closeBtn:hover {
+      color: #000;
+    }
+    .info-title {
+      font-size: 1.15em;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #1a1a1a;
+    }
+    .info-author {
+      font-style: italic;
+      color: #555;
+      margin-bottom: 8px;
+    }
+    .info-desc {
+      color: #333;
+    }
   </style>
 </head>
 <body>
 
-<!-- Инфобокс -->
+<!-- Информационное окно -->
 <div id="infoBox">
   <span id="closeBtn">X</span>
   <div id="infoContent"></div>
 </div>
 
-<!-- A-Frame сцена -->
-<a-scene 
-  background="color: #f5f5f5" 
-   shadow="type: pcfsoft"
+<!-- Сцена A-Frame -->
+<a-scene
+  background="color: #f5f5f5"
+  shadow="type: pcfsoft"
   fog="type: linear; color: #f0f0f0; near: 10; far: 20">
-  
+
   <!-- Освещение -->
   <a-entity light="type: ambient; intensity: 0.75"></a-entity>
   <a-entity light="type: directional; intensity: 0.8; castShadow: true" position="4 7 4"></a-entity>
@@ -54,9 +88,9 @@
   <!-- Контейнер для картин -->
   <a-entity id="gallery"></a-entity>
 
-  <!-- Камера с управлением -->
+  <!-- Камера -->
   <a-entity camera look-controls wasd-controls position="0 1.6 8">
-    <a-entity cursor="rayOrigin: mouse; fuse: false" 
+    <a-entity cursor="rayOrigin: mouse; fuse: false"
               raycaster="objects: .clickable; far: 30"></a-entity>
   </a-entity>
 </a-scene>
@@ -64,13 +98,11 @@
 <script>
 async function initGallery() {
   try {
-    // Загружаем оба JSON одновременно
     const [manifestRes, descRes] = await Promise.all([
       fetch('assets/manifest.json'),
       fetch('assets/descriptions.json')
     ]);
 
-    // Проверка HTTP-статуса
     if (!manifestRes.ok) throw new Error(`Не удалось загрузить manifest.json (${manifestRes.status})`);
     if (!descRes.ok) throw new Error(`Не удалось загрузить descriptions.json (${descRes.status})`);
 
@@ -78,26 +110,16 @@ async function initGallery() {
     const desc = await descRes.json();
     const root = document.getElementById('gallery');
     const files = manifest.paintings || [];
-    const count = files.length;
 
-    if (count === 0) {
-      throw new Error('В manifest.json нет картин (проверьте массив "paintings")');
-    }
+    if (files.length === 0) throw new Error('В manifest.json нет картин (массив "paintings" пуст)');
 
-    // Расставляем картины по кругу
     files.forEach((file, i) => {
-      if (!file.filename) {
-        console.warn('Пропущен файл без filename:', file);
-        return;
-      }
-
-      const angle = (i / count) * Math.PI * 2;
+      const angle = (i / files.length) * Math.PI * 2;
       const radius = 4.8;
       const x = radius * Math.cos(angle);
       const z = radius * Math.sin(angle);
       const rotY = -angle * 180 / Math.PI + 90;
 
-      // Информация о картине
       const info = desc[file.filename] || {
         title: 'Без названия',
         author: 'Неизвестный автор',
@@ -105,7 +127,6 @@ async function initGallery() {
         description: 'Описание отсутствует'
       };
 
-      // Создаём плоскость с картинкой
       const plane = document.createElement('a-plane');
       plane.setAttribute('src', `assets/${file.filename}`);
       plane.setAttribute('width', '1.8');
@@ -115,49 +136,37 @@ async function initGallery() {
       plane.setAttribute('shadow', 'cast: true; receive: false');
       plane.classList.add('clickable');
 
-      // Сохраняем данные для инфобокса
       plane.dataset.title = info.title;
       plane.dataset.author = info.author;
       plane.dataset.year = info.year;
       plane.dataset.desc = info.description;
 
-      // Клик по картине
       plane.addEventListener('click', () => showInfo(plane));
-
       root.appendChild(plane);
     });
 
-    console.log(`Галерея загружена: ${count} картин`);
+    console.log(`Галерея загружена: ${files.length} картин`);
   } catch (err) {
     console.error('Ошибка инициализации галереи:', err);
-    alert(
-      'Ошибка загрузки галереи!\n\n' +
-      err.message + '\n\n' +
-      'Решение:\n' +
-      '1. Запустите через локальный сервер (http-server)\n' +
-      '2. Проверьте валидность JSON-файлов\n' +
-      '3. Убедитесь, что все .jpg файлы в папке assets/'
-    );
+    alert('Ошибка загрузки галереи:\n' + err.message);
   }
 }
 
-// Показ инфобокса
 function showInfo(el) {
+  const box = document.getElementById('infoBox');
   const content = document.getElementById('infoContent');
   content.innerHTML = `
-    <div class="info-title">${el.dataset.title || 'Без названия'}</div>
-    <div class="info-author">${el.dataset.author || 'Неизвестен'} (${el.dataset.year || '?'})</div>
-    <div class="info-desc">${el.dataset.desc || 'Нет описания'}</div>
+    <div class="info-title">${el.dataset.title}</div>
+    <div class="info-author">${el.dataset.author} (${el.dataset.year})</div>
+    <div class="info-desc">${el.dataset.desc}</div>
   `;
-  document.getElementById('infoBox').style.display = 'block';
+  box.style.display = 'block';
 }
 
-// Закрытие инфобокса
 document.getElementById('closeBtn').onclick = () => {
   document.getElementById('infoBox').style.display = 'none';
 };
 
-// Запуск
 initGallery();
 </script>
 
