@@ -130,6 +130,9 @@ async function initGallery() {
 
       const plane = document.createElement('a-plane');
       plane.setAttribute('src', `assets/${file.filename}`);
+      plane.setAttribute('material', 'side: double;');
+      plane.setAttribute('color', '#ffffff');
+      plane.setAttribute('wireframe', false);
       plane.setAttribute('width', '1.8');
       plane.setAttribute('height', '1.2');
       plane.setAttribute('position', `${x} 1.6 ${z}`);
